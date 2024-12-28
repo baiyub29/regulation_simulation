@@ -36,6 +36,19 @@ hatN_22 = 2*cos(0.5*tt)+2*sin(0.5*s2intx)-cos(0.5*s2intx-0.5);
 
 s2int0 = s2intx(1,:);
 
+% check the observability condition
+dst = (1.5+cos(2*pi*t))./(1.5+cos(2*pi*s2int0));
+dhatN_21 = cos(0.5*t)+dst.*(sin(0.5*s2int0)-0.5*cos(0.5*s2int0-0.5));
+dhatN_22 = -sin(0.5*t)+dst.*(cos(0.5*s2int0)+0.5*sin(0.5*s2int0-0.5));
+
+detN = hatN_21(1,:).*dhatN_22 - hatN_22(1,:).*dhatN_21;
+
+if all(abs(detN) > 0.05)
+    disp('The system is observable');
+else
+    error('The system is not observable. Terminating the program.');
+end
+
 % calculate observer gains ld1, ld2, and lw(t,x)=hat{N}(t,x)*exp(-t*S_d)*ld1
 N_1 = hatN_21(1,:).*cos(0.5*t) - hatN_22(1,:).*sin(0.5*t);
 N_2 = hatN_21(1,:).*sin(0.5*t) + hatN_22(1,:).*cos(0.5*t);
